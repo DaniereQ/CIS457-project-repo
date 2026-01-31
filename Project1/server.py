@@ -18,16 +18,23 @@ class Server:
             server.bind((self.host, self.port))
 
             # listen for messages
+            print("Waiting for a message")
             server.listen()
             
-            connection, addresss = server.accept()
+            connection, address = server.accept()
+            print(f"Message from: {address}")
+
             with connection:
                 while True:
                     data = connection.recv(2048)
-                    if not data:
+
+                    if not data or data == bytes():
                         break
+                    print(f'Received: {data.decode()}')
                 
-                print(f'Received: {data.decode()}')
+                    # Send back a message
+                    print(f"Sending acknowledgement")
+                    connection.sendall(str("Message Received").encode())
 
 if __name__ == "__main__":
     server = Server()

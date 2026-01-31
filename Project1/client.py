@@ -11,18 +11,18 @@ class Client:
         self.host = socket.gethostname() # this is getting ur own address to send a message to yourself
         self.port = 5800
 
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
     def send_message(self, msg: str):
-        try:
-            self.client_socket.connect(self.host, self.port)
-        except:
-            print("The connection failed")
-            return
-        
-        print(f'Sending: {msg}')
-        self.client_socket.sendall(msg.encode())
-        self.client_socket.close()
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
+            # Create socket and connect to host,port
+            client.connect((self.host, self.port))
+
+            # Send a message
+            print(f'Sending: {msg}')
+            client.sendall(msg.encode())
+            
+            # Receive the acknowledgement message back
+            data = client.recv(2048)
+            print(f"Acknowledgement Message: {data.decode()}")
 
 
 if __name__ == "__main__":
