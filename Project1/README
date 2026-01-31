@@ -4,3 +4,19 @@
 - Lucas Williams
 - Luke Erlewein
 - Quentin Daniere
+
+## Usage instructions
+
+- Open two seperate terminals.
+
+- Start the client.py on one terminal and server.py on the other terminal.
+
+- On the client application, type a message that will be sent over to the other terminal.
+
+- Verify that the message has been received on the other terminal.
+
+- Write a response message from the server terminal that will be sent back to the client.
+
+- Verify that the message has been received on the other terminal.
+
+- The program will automatically close, so you can just exit out of both of the terminals.
