@@ -1,7 +1,7 @@
 """
 Project 1 Client Python File
 
-Names: Quentin Daniere, Luke Erlewein, Lucas
+Names: Quentin Daniere, Luke Erlewein, Lucas Williams
 """
 
 import socket
@@ -33,8 +33,8 @@ class Server:
                     print(f'Received: {data.decode()}')
                 
                     # Send back a message
-                    print(f"Sending acknowledgement")
-                    connection.sendall(str("Message Received").encode())
+                    message = input("Please reply with a return message: ")
+                    connection.sendall(str(message).encode())
 
 if __name__ == "__main__":
     server = Server()
