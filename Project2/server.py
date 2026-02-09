@@ -11,19 +11,20 @@ class Server:
     def __init__(self):
         self.host = socket.gethostname()
         self.port = 5800
+        self.connections = []
 
-        self.listen_for_messages()
+        self.run()
     
-    def listen_for_messages(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
-            server.bind((self.host, self.port))
+    def run(self):
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((self.host, self.port))
+        print('Listening at', server.getsockname())
 
-            # listen for messages
-            print("Waiting for a message")
+        while True:
             server.listen()
             
-            connection, address = server.accept()
-            print(f"Message from: {address}")
+            connection, name = server.accept()
 
             with connection:
                 while True:
@@ -32,10 +33,7 @@ class Server:
                     if not data or data == bytes():
                         break
                     print(f'Received: {data.decode()}')
-                
-                    # Send back a message
-                    message = input("Please reply with a return message: ")
-                    connection.sendall(str(message).encode())
 
+    
 if __name__ == "__main__":
     server = Server()
