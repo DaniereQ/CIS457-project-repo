@@ -12,28 +12,43 @@ class Server:
         self.host = socket.gethostname()
         self.port = 5800
         self.connections = []
+        self.connection = None
 
-        self.run()
-    
-    def run(self):
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.bind((self.host, self.port))
-        print('Listening at', server.getsockname())
+        self.server.bind((self.host, self.port))
+        print('Listening at', self.server.getsockname())
+
+        self.listen_thread = threading.Thread(target=self.server_listen)
+        self.send_thread = threading.Thread(target=self.send_message)
+
+        self.listen_thread.start()
+        self.send_thread.start()
+    
+    def server_listen(self):
 
         while True:
-            server.listen()
+            self.server.listen()
             
-            connection, name = server.accept()
+            self.connection, name = self.server.accept()
 
-            with connection:
+            with self.connection:
                 while True:
-                    data = connection.recv(2048)
+                    data = self.connection.recv(2048)
 
                     if not data or data == bytes():
                         break
-                    print(f'Received: {data.decode()}')
+                    print(f'{name}: {data.decode()}')
 
+    def send_message(self):
+        while True:
+            msg = input()
+            # Send a message
+            self.connection.sendall(msg.encode())
     
+    def __del__(self):
+        self.listen_thread.join()
+        self.send_thread.join()
+
 if __name__ == "__main__":
     server = Server()
