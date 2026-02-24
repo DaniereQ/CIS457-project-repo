@@ -11,4 +11,6 @@
 
 - Start the client.py on one terminal and server.py on the other terminal.
 
-- 
+- On the client terminal, enter in your user name.
+
+- Once the user name has been put in, you are able to type and communicate between client and server indefinitely.

@@ -15,8 +15,8 @@ class Server:
         self.connection = None
 
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server.bind((self.host, self.port))
+
         print('Listening at', self.server.getsockname())
 
         self.listen_thread = threading.Thread(target=self.server_listen)
@@ -26,25 +26,27 @@ class Server:
         self.send_thread.start()
     
     def server_listen(self):
+        self.server.listen()
+        
+        self.connection, name = self.server.accept()
 
-        while True:
-            self.server.listen()
-            
-            self.connection, name = self.server.accept()
+        with self.connection:
+            while True:
+                data = self.connection.recv(2048)
 
-            with self.connection:
-                while True:
-                    data = self.connection.recv(2048)
-
-                    if not data or data == bytes():
-                        break
-                    print(f'{name}: {data.decode()}')
+                if not data or data == bytes():
+                    break
+                print(data.decode())
 
     def send_message(self):
         while True:
             msg = input()
             # Send a message
-            self.connection.sendall(msg.encode())
+            if msg.lower() == "exit":
+                self.connection.close()
+                break
+            full_msg = f"Server: {msg}"
+            self.connection.sendall(full_msg.encode())
     
     def __del__(self):
         self.listen_thread.join()

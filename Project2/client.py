@@ -11,6 +11,9 @@ class Client:
     def __init__(self):
         self.host = socket.gethostname() # this is getting ur own address to send a message to yourself
         self.port = 5800
+
+        self.name = input("Enter client name: ")
+
         # Create socket and connect to host,port
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((self.host, self.port))
@@ -25,14 +28,18 @@ class Client:
         while True:
             msg = input()
             # Send a message
-            self.client.sendall(msg.encode())
+            if msg.lower() == "exit":
+                self.client.close()
+                break
+            full_msg = f"{self.name}: {msg}"
+            self.client.sendall(full_msg.encode())
         
     def receive_message(self):
         while True:
             data = self.client.recv(2048)
             if not data:
                 break
-            print(f"Received: {data.decode()}")
+            print(f"{data.decode()}")
     
     def __del__(self):
         self.receive_thread.join()
