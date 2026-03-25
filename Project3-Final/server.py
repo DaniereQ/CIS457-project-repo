@@ -12,7 +12,6 @@ class Server:
         self.host = socket.gethostname()
         self.port = 5800
         self.connections = []
-        self.connection = None
 
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((self.host, self.port))
@@ -26,28 +25,31 @@ class Server:
     def server_listen(self):
         self.server.listen()
         
-        self.connection, name = self.server.accept()
+        connection, name = self.server.accept()
+        self.connections.append(connection)
 
-        with self.connection:
-            self.connections.append(self.connection)
+        #Create a new thread here to listen to that connection
+        socket_thread = threading.Thread(target=self.server_socket, args=(connection))
+        socket_thread.start()
+        
+    def server_socket(self, socket):
             while True:
-                data = self.connection.recv(2048)
+                data = socket.recv(2048)
 
                 if not data or data == bytes():
                     break
                 parts = str(data.decode).split(":")
                 for conn in self.connections:
-                    if conn != self.connection:
-                        self.send_message(parts[0], parts[1])
+                    if conn != socket:
+                        self.send_message(conn, parts[0], parts[1])
 
-    def send_message(self, user, msg):
-            
+    def send_message(self, conn, user, msg):
             full_msg = f"{user}: {msg}"
-            self.connection.sendall(full_msg.encode())
+            conn.sendall(full_msg.encode())
     
     def __del__(self):
         self.listen_thread.join()
-        self.send_thread.join()
+        self.socket_thread.join()
 
 if __name__ == "__main__":
     server = Server()
