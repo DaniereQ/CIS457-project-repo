@@ -17,6 +17,7 @@ class Client:
         # Create socket and connect to host,port
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((self.host, self.port))
+        self.client.sendall(self.name.encode())
 
         self.send_thread = threading.Thread(target=self.send_message)
         self.receive_thread = threading.Thread(target=self.receive_message)
@@ -26,7 +27,7 @@ class Client:
 
     def send_message(self):
         while True:
-            msg = input()
+            msg = input(f'{self.name}: ')
             # Send a message
             if msg.lower() == "exit":
                 self.client.close()
