@@ -27,7 +27,7 @@ class Client:
 
     def send_message(self):
         while True:
-            msg = input(f'{self.name}: ')
+            msg = input()
             # Send a message
             if msg.lower() == "exit":
                 self.client.close()
