@@ -49,12 +49,33 @@ class Server:
                 print(f"{name} disconnected")
                 break
 
-            # Parse message here
+            msg = data.decode()
+            cmd = msg.split()[1]
 
-            with self.lock:
-                for conn in self.connections:
-                    if conn is not socket:
-                        conn.sendall(data)
+            match cmd:
+                case "/list":
+                    curr_users = ""
+                    for id in list(self.connections.values()):
+                        curr_users += f'{id}, '
+                    curr_users = curr_users[:-2]
+                    with self.lock:
+                        socket.sendall(curr_users.encode())
+                case "/w":
+                    target_user = msg.split()[2]
+                    new_msg = msg.split()
+                    del new_msg[1:3]
+                    new_msg = " ".join(new_msg)
+
+                    target_socket = next((k for k, v in self.connections.items() if v == target_user), None)
+                    with self.lock:
+                        target_socket.sendall(new_msg.encode())
+
+                case _:
+                    with self.lock:
+                        for conn in self.connections:
+                            if conn is not socket:
+                                conn.sendall(data)
+
 
 if __name__ == "__main__":
     server = Server()
