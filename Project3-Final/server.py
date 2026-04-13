@@ -18,7 +18,7 @@ class Server:
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server.bind((self.host, self.port))
 
-        local_ip = socket.gethostbyname(socket.gethostname())
+        local_ip = self.get_local_ip()
         print(f"Connection IP: {local_ip}")
         print('Listening at', self.server.getsockname())
 
@@ -26,6 +26,17 @@ class Server:
         self.listen_thread.daemon = True
         self.listen_thread.start()
 
+    # was running into issues where it would get the wrong IP.
+    # This connects to public google dns and then returns the local ip used to connect for the connection ip.
+    def get_local_ip(self):
+        # Create a dummy socket connection
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # Connect to a public DNS server
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    
     def server_listen(self):
         self.server.listen()
 
