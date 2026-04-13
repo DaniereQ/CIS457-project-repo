@@ -9,7 +9,7 @@ import threading
 
 class Server:
     def __init__(self):
-        self.host = socket.gethostname()
+        self.host = "0.0.0.0"  # Listen on all interfaces so other machines can connect
         self.port = 5800
         self.connections = {}
         self.lock = threading.Lock()
@@ -18,6 +18,8 @@ class Server:
         self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server.bind((self.host, self.port))
 
+        local_ip = socket.gethostbyname(socket.gethostname())
+        print(f"Connection IP: {local_ip}")
         print('Listening at', self.server.getsockname())
 
         self.listen_thread = threading.Thread(target=self.server_listen)

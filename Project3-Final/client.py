@@ -9,7 +9,7 @@ import threading
 
 class Client:
     def __init__(self):
-        self.host = socket.gethostname() # this is getting ur own address to send a message to yourself
+        self.host = input("Enter server IP address: ")
         self.port = 5800
 
         self.name = input("Enter client name: ")
