@@ -9,9 +9,9 @@ import threading
 
 class Client:
     def __init__(self):
-        self.host = socket.gethostname() # this is getting ur own address to send a message to yourself
+        self.host = input("Enter server IP address: ")
         self.port = 5800
-
+        self.running = True
         self.name = input("Enter client name: ")
 
         # Create socket and connect to host,port
@@ -25,22 +25,30 @@ class Client:
         self.send_thread.start()
         self.receive_thread.start()
 
+        self.receive_thread.join()
+        self.send_thread.join()
+
     def send_message(self):
-        while True:
+        while self.running:
             msg = input()
             # Send a message
             if msg.lower() == "exit":
+                self.running = False
+                self.client.shutdown(socket.SHUT_RDWR)
                 self.client.close()
-                break
+                continue
             full_msg = f"{self.name}: {msg}"
             self.client.sendall(full_msg.encode())
         
     def receive_message(self):
-        while True:
-            data = self.client.recv(2048)
-            if not data:
+        while self.running:
+            try:
+                data = self.client.recv(2048)
+                if not data:
+                    break
+                print(f"{data.decode()}")
+            except OSError:
                 break
-            print(f"{data.decode()}")
     
     def __del__(self):
         self.receive_thread.join()

@@ -7,4 +7,14 @@
 
 ## Usage instructions
 
-- 
+- Open four seperate terminals.
+
+- Start the server.py on one terminal and client.py on the other three terminals. (The clients can be on seperate computers)
+
+- For each of the client terminals input the IP that the server is on.
+
+- On the client terminals, enter in your user name for each of them.
+
+- Once the user name has been put in for all the clients, you are able to type and communicate in the major chatroom between all of the users.
+
+- You are able to use /w and then the username of another person to be able to communicate with them privately without the rest of the clients seeing it.
